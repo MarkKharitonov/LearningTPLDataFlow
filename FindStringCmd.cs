@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 
 namespace TPLDataFlow
@@ -20,12 +21,12 @@ namespace TPLDataFlow
                 FilePath = filePath;
             }
 
-            public IEnumerable<MatchingLine> YieldMatchingLines(string literal)
+            public async IAsyncEnumerable<MatchingLine> YieldMatchingLinesAsync(string literal)
             {
                 using var sr = new StreamReader(FilePath);
                 string line;
                 int lineNo = 0;
-                while ((line = sr.ReadLine()) != null)
+                while ((line = await sr.ReadLineAsync()) != null)
                 {
                     ++lineNo;
                     int pos = -1;
@@ -82,7 +83,7 @@ namespace TPLDataFlow
             {
                 Console.WriteLine($"Locating all the instances of {m_literal} in the C# code ... ");
             }
-            var res = Run(m_dir, m_literal, m_maxDOP1, m_maxDOP2);
+            var res = RunAsync(m_dir, m_literal, m_maxDOP1, m_maxDOP2).GetAwaiter().GetResult();
             if (!m_quiet)
             {
                 res.ForEach(o => Console.WriteLine(o.ToString(m_dir)));
@@ -90,13 +91,13 @@ namespace TPLDataFlow
             return 0;
         }
 
-        private List<MatchingLine> Run(string workspaceRoot, string literal, int maxDOP1 = 1, int maxDOP2 = 1)
+        private static async Task<List<MatchingLine>> RunAsync(string workspaceRoot, string literal, int maxDOP1 = 1, int maxDOP2 = 1)
         {
             var res = new List<MatchingLine>();
             var projects = (workspaceRoot + "build\\projects.yml").YieldAllProjects();
 
             var produceCSFiles = new TransformManyBlock<ProjectEx, CSFile>(YieldCSFiles, new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = maxDOP1 });
-            var produceMatchingLines = new TransformManyBlock<CSFile, MatchingLine>(csFile => csFile.YieldMatchingLines(literal), new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = maxDOP2 });
+            var produceMatchingLines = new TransformManyBlockEx<CSFile, MatchingLine>(csFile => csFile.YieldMatchingLinesAsync(literal), new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = maxDOP2 });
             var getMatchingLines = new ActionBlock<MatchingLine>(res.Add);
 
             var linkOptions = new DataflowLinkOptions { PropagateCompletion = true };
@@ -106,7 +107,7 @@ namespace TPLDataFlow
 
             projects.ForEach(p => produceCSFiles.Post(p));
             produceCSFiles.Complete();
-            getMatchingLines.Completion.Wait();
+            await getMatchingLines.Completion;
 
             return res;
         }
