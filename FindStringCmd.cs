@@ -1,13 +1,11 @@
-﻿using CSTool.ObjectModel;
-using ManyConsole;
+﻿using ManyConsole;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks.Dataflow;
 
-namespace CSTool
+namespace TPLDataFlow
 {
     class FindStringCmd : ConsoleCommand
     {

@@ -1,12 +1,11 @@
-﻿using CSTool.ObjectModel;
-using Microsoft.Build.Construction;
+﻿using Microsoft.Build.Construction;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Project = Microsoft.Build.Evaluation.Project;
 
-namespace CSTool
+namespace TPLDataFlow
 {
     public static class Extensions
     {

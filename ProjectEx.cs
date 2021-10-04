@@ -5,7 +5,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.XPath;
 
-namespace CSTool.ObjectModel
+namespace TPLDataFlow
 {
     public class ProjectEx
     {
