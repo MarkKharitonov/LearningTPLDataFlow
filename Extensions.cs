@@ -42,5 +42,7 @@ namespace CSTool
             .Where(o => o.EndsWith(".csproj"));
 
         public static IEnumerable<string> YieldCSFiles(this Project project) => project.GetItems("Compile").Select(item => item.GetMetadataValue("FullPath"));
+
+        public static string EnsureTrailingBackslash(this string s) => (s == null || s == "" || s[^1] != '\\') ? s + '\\' : s;
     }
 }
