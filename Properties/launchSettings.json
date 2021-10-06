@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TPLDataFlow": {
+      "commandName": "Project",
+      "commandLineArgs": "find-string -d C:\\dayforce\\tip -l GetClientLegalPromptFlag -o c:\\temp"
+    }
+  }
+}

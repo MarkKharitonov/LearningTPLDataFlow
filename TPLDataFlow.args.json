@@ -1,0 +1,10 @@
+{
+  "FileVersion": 2,
+  "Id": "759a0303-7af3-497c-843b-a3319df11030",
+  "Items": [
+    {
+      "Id": "1b39b9a5-3c4d-442e-9a5f-21948c3ed6e0",
+      "Command": "find-string -d C:\\dayforce\\tip -l GetClientLegalPromptFlag -o c:\\temp"
+    }
+  ]
+}
